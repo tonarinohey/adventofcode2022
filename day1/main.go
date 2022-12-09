@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"strconv"
 )
 
-// 別に各エルフが運ぶ食品カロリーの総量を再利用したりしないので、slice利用したりせずただ数え上げるだけ。
+// part1: 別に各エルフが運ぶ食品カロリーの総量を再利用したりしないので、slice利用したりせずただ数え上げるだけ。
+// part2: heaviestColをスライスで管理し、最終的に末尾から3つの要素の和をとれば題意が満たせそう
 func main() {
 	fileName := "input.txt"
 	fp, err := os.Open(fileName)
@@ -22,7 +24,8 @@ func main() {
 	tmpSum := 0
 	blockNum := 0
 	heaviestCol := 0
-	heaviestBlockNum := 0
+	sumColsTopThree := 0
+	var cols []int
 	for {
 		line, isPrefix, err := reader.ReadLine() // size を超えるとisPrefixがfalse
 		if err == io.EOF {
@@ -38,8 +41,8 @@ func main() {
 			blockNum = blockNum + 1
 			if heaviestCol < tmpSum {
 				heaviestCol = tmpSum
-				heaviestBlockNum = blockNum
 			}
+			cols = append(cols, tmpSum)
 			tmpSum = 0
 		} else {
 			i, _ := strconv.Atoi(string(tmp))
@@ -50,7 +53,17 @@ func main() {
 			tmp = nil
 		}
 	}
-	println(heaviestBlockNum)
-	fmt.Printf("最大カロリーを抱えるエルフの番号: %d \n", heaviestBlockNum)
-	fmt.Printf("最大カロリー: %d \n", heaviestCol)
+
+	// colsをソートする
+	sort.Sort(sort.Reverse(sort.IntSlice(cols)))
+	println(cols)
+
+	// 逆順にsliceをイテレートし最大3要素を取得する
+	for i := 0; i <= 2; i++ {
+		fmt.Println(cols[i])
+		sumColsTopThree = sumColsTopThree + cols[i]
+	}
+
+	fmt.Printf("最大カロリー: %d \n", cols[0])
+	fmt.Printf("最大カロリーTOP3の和: %d \n", sumColsTopThree)
 }
