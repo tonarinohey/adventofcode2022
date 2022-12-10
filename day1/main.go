@@ -9,8 +9,6 @@ import (
 	"strconv"
 )
 
-// part1: 別に各エルフが運ぶ食品カロリーの総量を再利用したりしないので、slice利用したりせずただ数え上げるだけ。
-// part2: heaviestColをスライスで管理し、最終的に末尾から3つの要素の和をとれば題意が満たせそう
 func main() {
 	fileName := "input.txt"
 	fp, err := os.Open(fileName)
@@ -23,7 +21,6 @@ func main() {
 	var tmp []byte
 	tmpSum := 0
 	blockNum := 0
-	heaviestCol := 0
 	sumColsTopThree := 0
 	var cols []int
 	for {
@@ -39,9 +36,6 @@ func main() {
 		// 空文字の行検出したらリセット
 		if string(tmp) == "" {
 			blockNum = blockNum + 1
-			if heaviestCol < tmpSum {
-				heaviestCol = tmpSum
-			}
 			cols = append(cols, tmpSum)
 			tmpSum = 0
 		} else {
